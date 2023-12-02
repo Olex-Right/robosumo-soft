@@ -7,24 +7,37 @@
 int buttonState = 0;
 int lastButtonState = 0;
 int motorState = 0;
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 50;  // Хз яка саме затримка буде найкращою
 
 void setup() {
-    Serial.begin(9600);
-    pinMode(BUTTON_PIN, INPUT);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
     pinMode(LEFT_FORWARD, OUTPUT);
     pinMode(LEFT_BACKWARD, OUTPUT);
     pinMode(RIGHT_FORWARD, OUTPUT);
     pinMode(RIGHT_BACKWARD, OUTPUT);
+    Serial.begin(9600);  
 }
 
 void loop() {
-    buttonState = digitalRead(BUTTON_PIN);
-    if (buttonState == HIGH && lastButtonState == LOW) {
-        // Це типо реалізація потрійного тригеру для моторів
-        motorState = (motorState + 1) % 3;
-        updateMotors();
+    int reading = digitalRead(BUTTON_PIN);
+
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
     }
-    lastButtonState = buttonState;
+
+    if ((millis() - lastDebounceTime) > debounceDelay) {
+        if (reading != buttonState) {
+            buttonState = reading;
+
+            if (buttonState == HIGH) {
+                motorState = (motorState + 1) % 3;
+                updateMotors();
+            }
+        }
+    }
+
+    lastButtonState = reading;
 }
 
 void updateMotors() {
