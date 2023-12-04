@@ -1,19 +1,24 @@
 #define BUTTON_PIN 12
-#define TRIGGER 10
-#define ECHO 11
-#define LEFT_BACKWARD 3
-#define LEFT_FORWARD 4
-#define RIGHT_BACKWARD 5
-#define RIGHT_FORWARD 6
+#define TRIGGER 8
+#define ECHO 7
+#define LEFT_BACKWARD 11
+#define LEFT_FORWARD 10
+#define RIGHT_BACKWARD 3
+#define RIGHT_FORWARD 9
 
 int distance=0;
-
+bool active=false;
+short robotState = 0; //0 - stop; 1- move Forward; 2 - move Backward; 3 - turn Right; 4 - turn Left;
 void setup()
 {
   Serial.begin(9600);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(ECHO, INPUT);
   pinMode(TRIGGER, OUTPUT);
+  pinMode(LEFT_BACKWARD, OUTPUT);
+  pinMode(LEFT_FORWARD, OUTPUT);
+  pinMode(RIGHT_BACKWARD, OUTPUT);
+  pinMode(RIGHT_FORWARD, OUTPUT);
 }
 
 int sensor()
@@ -35,32 +40,68 @@ int sensor()
   return 0;
 }
 
+void wait()
+{
+  while(digitalRead(BUTTON_PIN)==0);
+  delay(5000);
+}
+
 void loop()
 {
   //Serial.println(digitalRead(ECHO));
-  if(digitalRead(BUTTON_PIN)==0)
+  if(digitalRead(BUTTON_PIN)==0 && !active)
   {
+    wait();
+    active=!active;
+  }
+  if(active){
     distance=sensor();
     Serial.println(distance);
 
-    // less than 100 cm
-    if(distance < 100){
-      // ensure other pins are 0
-      digitalWrite(LEFT_BACKWARD, 0);
-      digitalWrite(RIGHT_BACKWARD, 0);
-
-      // go forward
-      digitalWrite(LEFT_FORWARD, 1);
-      digitalWrite(RIGHT_FORWARD, 1);
-    } else {
-      // ensure other pins are 0
-      digitalWrite(LEFT_BACKWARD, 0);
-      digitalWrite(RIGHT_FORWARD, 0);
-
-      // rotate to the right
-      digitalWrite(LEFT_FORWARD, 1);
-      digitalWrite(RIGHT_BACKWARD, 1);
+    // less than 75 cm
+    if(distance < 75){
+      Serial.println(2);
+      if(!(robotState == 1)){
+        stopMovement();
+        moveForward();
+        robotState = 1;
+      }
+    } 
+    else {   
+        if(!(robotState == 3)){
+            stopMovement();
+            rotateRight();
+            robotState = 3;
+        }
     }
   }
-  delay(100);
+  else {
+      stopMovement();
+  }
+}
+
+void stopMovement()
+{
+  analogWrite(LEFT_FORWARD, 0);
+  analogWrite(RIGHT_FORWARD, 0);
+  analogWrite(LEFT_BACKWARD, 0);
+  analogWrite(RIGHT_FORWARD, 0);
+}
+
+void moveForward()
+{
+  analogWrite(LEFT_FORWARD, 128);
+  analogWrite(RIGHT_FORWARD, 128);
+}
+
+void rotateRight()
+{
+  analogWrite(LEFT_FORWARD, 128);
+  analogWrite(RIGHT_BACKWARD, 128);
+}
+
+void rotateLeft()
+{
+  analogWrite(LEFT_BACKWARD, 128);
+  analogWrite(RIGHT_FORWARD, 128);
 }
