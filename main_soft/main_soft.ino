@@ -85,8 +85,13 @@ void stopMovement() {
 }
 
 void moveForward() {
-  analogWrite(LEFT_FORWARD, 128);
-  analogWrite(RIGHT_FORWARD, 128);
+  analogWrite(LEFT_FORWARD, 255);
+  analogWrite(RIGHT_FORWARD, 255);
+}
+
+void moveBackward() {
+  analogWrite(LEFT_BACKWARD, 255);
+  analogWrite(RIGHT_BACKWARD, 255);
 }
 
 void rotateRight() {
