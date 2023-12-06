@@ -6,6 +6,10 @@
 #define RIGHT_BACKWARD 3
 #define RIGHT_FORWARD 9
 
+const int blackColor = 100;  
+const int whiteColor = 800;  
+const int errorRange = 50;
+
 int distance = 0;
 bool active = false;
 short robotState = 0;  //0 - stop; 1- move Forward; 2 - move Backward; 3 - turn Right; 4 - turn Left;
@@ -53,6 +57,24 @@ void loop() {
   if (active) {
     distance = sensor();
     Serial.println(distance);
+
+    // Read the value of the color sensor on analog pin 2
+    int colorValue = analogRead(2);
+
+    if (colorValue >= (blackColor - errorRange) && colorValue <= (blackColor + errorRange)) {
+        // Detected black color
+        Serial.println("Black Color Detected");
+    }
+    else if (colorValue >= (whiteColor - errorRange) && colorValue <= (whiteColor + errorRange)) {
+        // Detected white color
+        Serial.println("White Color Detected");
+    }
+    else {
+        // Unknown color
+        Serial.println("Unknown Color");
+        stopMovement();
+        robotState = 0;
+    }
 
     // less than 75 cm
     if (distance < 75) {
