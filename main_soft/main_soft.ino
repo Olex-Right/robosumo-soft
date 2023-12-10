@@ -9,8 +9,8 @@
 #define ROTATION_GAIN 60
 #define DISTANCE 75
 
-const int blackColor = 300;  
-const int whiteColor = 700;  
+const int blackColor = 300;
+const int whiteColor = 700;
 const int errorRange = 50;
 
 int distance = 0;
@@ -52,15 +52,12 @@ int sensor()
 
 
 
-
-
 void wait() 
 {
   while (digitalRead(BUTTON_PIN) == 0)
     ;
   //delay(5000);
 }
-
 
 
 
@@ -140,15 +137,11 @@ void stopMovement()
   digitalWrite(RIGHT_BACKWARD, LOW);
 }
 
-
-
 void moveForward() 
 {
   digitalWrite(LEFT_FORWARD, HIGH);
   digitalWrite(RIGHT_FORWARD, HIGH);
 }
-
-
 
 void moveBackward() 
 {
@@ -156,15 +149,11 @@ void moveBackward()
   digitalWrite(RIGHT_BACKWARD, HIGH);
 }
 
-
-
 void rotateRight() 
 {
   analogWrite(LEFT_FORWARD, ROTATION_GAIN);
   analogWrite(RIGHT_BACKWARD, ROTATION_GAIN);
 }
-
-
 
 void rotateLeft() 
 {
