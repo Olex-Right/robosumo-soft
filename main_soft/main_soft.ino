@@ -9,7 +9,7 @@
 #define RIGHT_FORWARD 9
 
 #define ROTATION_GAIN 60
-#define DISTANCE 75
+#define DISTANCE 20
 
 const int blackColor = 300;
 const int whiteColor = 700;
@@ -65,7 +65,7 @@ void wait()
 
 void loop()
 {
-  delay(100);
+  delay(1);
   // wait for button
   if ((digitalRead(BUTTON_PIN) == 0) && !active)
   {
@@ -82,26 +82,21 @@ void loop()
     Serial.println("rightDistance " + rightDistance);
     Serial.println("leftDistance " + leftDistance);
 
-    // Read the value of the color sensor on analog pin 2
-    int colorValue = analogRead(2);
-
-    if (colorValue >= (blackColor - errorRange) && colorValue <= (blackColor + errorRange))
-    {
-      // Detected black color
-      Serial.println("Black Color Detected");
+    //here check COLOR
+    int colorSensors = 0;
+    if (!isInRangeColor(2)){
+        ++colorSensors;
     }
-    else if (colorValue >= (whiteColor - errorRange) && colorValue <= (whiteColor + errorRange))
-    {
-      // Detected white color
-      Serial.println("White Color Detected");
+    if (!isInRangeColor(4)){
+        ++colorSensors;
     }
-    else
-    {
-      // Unknown color
-      Serial.println("Unknown Color");
-      stopMovement();
-      active = false;
-      robotState = 0;
+    if (!isInRangeColor(6)){
+        ++colorSensors;
+    }
+    if (colorSensors >= 2){
+        stopMovement();
+        active = false;
+        robotState = 0;
     }
 
     // less than DISTANCE in cm
@@ -187,4 +182,30 @@ void rotateLeft()
 {
   analogWrite(LEFT_BACKWARD, ROTATION_GAIN);
   analogWrite(RIGHT_FORWARD, ROTATION_GAIN);
+}
+//check if color is in range by giving it pin, if no -> return false
+bool isInRangeColor(int pin){
+    int colorValue = analogRead(pin);
+
+    if (colorValue >= (blackColor - errorRange) && colorValue <= (blackColor + errorRange))
+    {
+      // Detected black color
+      Serial.print("Black Color Detected on ");
+      Serial.println(pin);
+      return true;
+    }
+    else if (colorValue >= (whiteColor - errorRange) && colorValue <= (whiteColor + errorRange))
+    {
+      // Detected white color
+      Serial.print("White Color Detected on ");
+      Serial.println(pin);
+      return true;
+    }
+    else
+    {
+      // Unknown color
+      Serial.print("Unknown Color Detected on ");
+      Serial.println(pin);
+      return false;
+    }
 }
