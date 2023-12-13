@@ -1,7 +1,7 @@
 // Constants for pin assignments
 #define BUTTON_PIN 12
 #define TRIGGER 8
-#define FORWARD_ECHO 7
+#define FORWARD_ECHO 6
 #define LEFT_ECHO 4
 #define RIGHT_ECHO 2
 #define BACKWARD_ECHO 1  // 1 ???
@@ -18,6 +18,8 @@
 const int blackColor = 300;
 const int whiteColor = 700;
 const int errorRange = 50;
+
+const bool readColor = true;
 
 // Distance measurements
 int forwardDistance = 0;
@@ -158,42 +160,62 @@ void logColorDetection(int pin, const String& color) {
 
 // Determine the desired state based on sensor readings
 void determineState() {
+    Serial.println("Determinine state:");
+
     if (forwardDistance < DISTANCE && forwardDistance != -1 && isActive) {
         robotState = FORWARD;
+        Serial.println("State set to FORWARD");
     }
     else if (leftDistance < DISTANCE && leftDistance != -1 && isActive) {
         robotState = TURN_LEFT;
+        Serial.println("State set to TURN_LEFT");
     }
     else if (rightDistance < DISTANCE && rightDistance != -1 && isActive) {
         robotState = TURN_RIGHT;
+        Serial.println("State set to TURN_RIGHT");
     }
     else if (backwardDistance < DISTANCE && backwardDistance != -1 && isActive) {
         robotState = BACKWARD;
+        Serial.println("State set to BACKWARD");
     }
     else if (isActive) {
-        robotState = previousState; // Maintain previous state if still active
+        robotState = previousState;
+        Serial.print("Continuing previous state: ");
+        Serial.println(robotState);
     }
     else {
         robotState = STOP;
+        Serial.println("State set to STOP");
     }
 }
 
 // Handle robot movement based on the determined state
 void handleMovement() {
+    Serial.println("Handle movement:");
     determineState();
-
     switch (robotState) {
-    case FORWARD: moveForward();
+    case FORWARD:
+        Serial.println("moveForward()");
+        moveForward();
         break;
-    case TURN_LEFT: turnLeft();
+    case TURN_LEFT:
+        Serial.println("turnLeft()");
+        turnLeft();
         break;
-    case TURN_RIGHT: turnRight();
+    case TURN_RIGHT:
+        Serial.println("turnRight()");
+        turnRight();
         break;
-    case BACKWARD: moveBackward();
+    case BACKWARD:
+        Serial.println("moveBackward()");
+        moveBackward();
         break;
-    case STOP: stopMovement();
+    case STOP:
+        Serial.println("stopMovement()");
+        stopMovement();
         break;
     default:
+        Serial.println("continuePreviousMovement()");
         continuePreviousMovement();
     }
 }
@@ -225,6 +247,7 @@ void stopMovement() {
     digitalWrite(RIGHT_FORWARD, LOW);
     digitalWrite(LEFT_BACKWARD, LOW);
     digitalWrite(RIGHT_BACKWARD, LOW);
+    Serial.println("STOPPING");
 }
 
 void moveForward() {
