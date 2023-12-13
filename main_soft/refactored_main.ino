@@ -194,15 +194,15 @@ void handleMovement() {
     case STOP: stopMovement();
         break;
     default:
-        break;
+        continuePreviousMovement();
     }
 }
 
 // Continue previous movement (turn left/right)
 void continuePreviousMovement() {
-    if (robotState != 3 && robotState != 4) {
+    if (robotState != TURN_LEFT && robotState != TURN_RIGHT) {
         stopMovement();
-        if (previousState == 3) {
+        if (previousState == TURN_RIGHT) {
             turnRight();
         }
         else {
@@ -228,17 +228,18 @@ void stopMovement() {
 }
 
 void moveForward() {
-    if (robotState != 1) {
+    if (robotState != FORWARD) {
         Serial.println("Moving Forward");
         stopMovement();
         digitalWrite(LEFT_FORWARD, HIGH);
         digitalWrite(RIGHT_FORWARD, HIGH);
         robotState = FORWARD;
+        previousState = FORWARD;
     }
 }
 
 void moveBackward() {
-    if (robotState != 2) {
+    if (robotState != BACKWARD) {
         Serial.println("Moving Backward");
         stopMovement();
         digitalWrite(LEFT_BACKWARD, HIGH);
@@ -248,7 +249,7 @@ void moveBackward() {
 }
 
 void turnRight() {
-    if (robotState != 3) {
+    if (robotState != TURN_RIGHT) {
         Serial.println("Turning Right");
         stopMovement();
         analogWrite(LEFT_FORWARD, ROTATION_GAIN);
@@ -258,11 +259,12 @@ void turnRight() {
 }
 
 void turnLeft() {
-    if (robotState != 4) {
+    if (robotState != TURN_LEFT) {
         Serial.println("Turning Left");
         stopMovement();
         analogWrite(LEFT_BACKWARD, ROTATION_GAIN);
         analogWrite(RIGHT_FORWARD, ROTATION_GAIN);
         robotState = TURN_LEFT;
+        previousState = TURN_LEFT;
     }
 }
