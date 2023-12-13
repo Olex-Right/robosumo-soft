@@ -1,10 +1,10 @@
 // Constants for pin assignments
 #define BUTTON_PIN 12
 #define TRIGGER 8
-#define FORWARD_ECHO 6
+#define FORWARD_ECHO 7
 #define LEFT_ECHO 4
 #define RIGHT_ECHO 2
-#define BACKWARD_ECHO 1  // 1 ???
+#define BACKWARD_ECHO 6  
 #define LEFT_BACKWARD 11
 #define LEFT_FORWARD 10
 #define RIGHT_BACKWARD 3
@@ -19,7 +19,7 @@ const int blackColor = 300;
 const int whiteColor = 700;
 const int errorRange = 50;
 
-const bool readColor = true;
+const bool readColor = false;
 
 // Distance measurements
 int forwardDistance = 0;
@@ -64,7 +64,9 @@ void loop() {
 
     if (isActive) {
         measureDistances();
-        checkColorSensors();
+        if (readColor) {
+            checkColorSensors();
+        }
         handleMovement();
     }
     else {
@@ -251,43 +253,35 @@ void stopMovement() {
 }
 
 void moveForward() {
-    if (robotState != FORWARD) {
-        Serial.println("Moving Forward");
-        stopMovement();
-        digitalWrite(LEFT_FORWARD, HIGH);
-        digitalWrite(RIGHT_FORWARD, HIGH);
-        robotState = FORWARD;
-    }
+    Serial.println("Moving Forward");
+    stopMovement();
+    digitalWrite(LEFT_FORWARD, HIGH);
+    digitalWrite(RIGHT_FORWARD, HIGH);
+    robotState = FORWARD;
 }
 
 void moveBackward() {
-    if (robotState != BACKWARD) {
-        Serial.println("Moving Backward");
-        stopMovement();
-        digitalWrite(LEFT_BACKWARD, HIGH);
-        digitalWrite(RIGHT_BACKWARD, HIGH);
-        robotState = BACKWARD;
-    }
+    Serial.println("Moving Backward");
+    stopMovement();
+    digitalWrite(LEFT_BACKWARD, HIGH);
+    digitalWrite(RIGHT_BACKWARD, HIGH);
+    robotState = BACKWARD;
 }
 
 void turnRight() {
-    if (robotState != TURN_RIGHT) {
-        Serial.println("Turning Right");
-        stopMovement();
-        analogWrite(LEFT_FORWARD, ROTATION_GAIN);
-        analogWrite(RIGHT_BACKWARD, ROTATION_GAIN);
-        robotState = TURN_RIGHT;
-        previousState = TURN_RIGHT;
-    }
+    Serial.println("Turning Right");
+    stopMovement();
+    analogWrite(LEFT_FORWARD, ROTATION_GAIN);
+    analogWrite(RIGHT_BACKWARD, ROTATION_GAIN);
+    robotState = TURN_RIGHT;
+    previousState = TURN_RIGHT;
 }
 
 void turnLeft() {
-    if (robotState != TURN_LEFT) {
-        Serial.println("Turning Left");
-        stopMovement();
-        analogWrite(LEFT_BACKWARD, ROTATION_GAIN);
-        analogWrite(RIGHT_FORWARD, ROTATION_GAIN);
-        robotState = TURN_LEFT;
-        previousState = TURN_LEFT;
-    }
+    Serial.println("Turning Left");
+    stopMovement();
+    analogWrite(LEFT_BACKWARD, ROTATION_GAIN);
+    analogWrite(RIGHT_FORWARD, ROTATION_GAIN);
+    robotState = TURN_LEFT;
+    previousState = TURN_LEFT;
 }
