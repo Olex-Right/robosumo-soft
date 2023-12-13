@@ -234,7 +234,6 @@ void moveForward() {
         digitalWrite(LEFT_FORWARD, HIGH);
         digitalWrite(RIGHT_FORWARD, HIGH);
         robotState = FORWARD;
-        previousState = FORWARD;
     }
 }
 
@@ -255,6 +254,7 @@ void turnRight() {
         analogWrite(LEFT_FORWARD, ROTATION_GAIN);
         analogWrite(RIGHT_BACKWARD, ROTATION_GAIN);
         robotState = TURN_RIGHT;
+        previousState = TURN_RIGHT;
     }
 }
 
