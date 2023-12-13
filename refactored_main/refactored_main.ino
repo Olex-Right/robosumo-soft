@@ -29,6 +29,8 @@ int backwardDistance = 0;
 
 // Robot state variables
 bool isActive = false;
+bool stateUpdated = false;
+
 enum RobotState {
     STOP = 0,
     FORWARD,
@@ -165,28 +167,54 @@ void determineState() {
     Serial.println("Determinine state:");
 
     if (forwardDistance < DISTANCE && forwardDistance != -1 && isActive) {
-        robotState = FORWARD;
-        Serial.println("State set to FORWARD");
+        if (robotState == FORWARD) {
+            stateUpdated = false;
+        }
+        else {
+            robotState = FORWARD;
+            Serial.println("State set to FORWARD");
+            stateUpdated = true;
+        }
     }
     else if (leftDistance < DISTANCE && leftDistance != -1 && isActive) {
-        robotState = TURN_LEFT;
-        Serial.println("State set to TURN_LEFT");
+        if (robotState == TURN_LEFT) {
+			stateUpdated = false;
+		}
+		else {
+			robotState = TURN_LEFT;
+			Serial.println("State set to TURN_LEFT");
+			stateUpdated = true;
+		}
     }
     else if (rightDistance < DISTANCE && rightDistance != -1 && isActive) {
-        robotState = TURN_RIGHT;
-        Serial.println("State set to TURN_RIGHT");
+        if (robotState == TURN_RIGHT) {
+            stateUpdated = false;
+        }
+        else {
+            robotState = TURN_RIGHT;
+            Serial.println("State set to TURN_RIGHT");
+            stateUpdated = true;
+        }
     }
     else if (backwardDistance < DISTANCE && backwardDistance != -1 && isActive) {
-        robotState = BACKWARD;
-        Serial.println("State set to BACKWARD");
+        if (robotState == BACKWARD) {
+			stateUpdated = false;
+		}
+		else {
+			robotState = BACKWARD;
+			Serial.println("State set to BACKWARD");
+			stateUpdated = true;
+		}
     }
     else if (isActive) {
         robotState = previousState;
+        stateUpdated = false;
         Serial.print("Continuing previous state: ");
         Serial.println(robotState);
     }
     else {
         robotState = STOP;
+        stateUpdated = true;
         Serial.println("State set to STOP");
     }
 }
@@ -253,35 +281,43 @@ void stopMovement() {
 }
 
 void moveForward() {
-    Serial.println("Moving Forward");
-    stopMovement();
-    digitalWrite(LEFT_FORWARD, HIGH);
-    digitalWrite(RIGHT_FORWARD, HIGH);
-    robotState = FORWARD;
+    if (stateUpdated) {
+        Serial.println("Moving Forward");
+        stopMovement();
+        digitalWrite(LEFT_FORWARD, HIGH);
+        digitalWrite(RIGHT_FORWARD, HIGH);
+        robotState = FORWARD;
+    }
 }
 
 void moveBackward() {
-    Serial.println("Moving Backward");
-    stopMovement();
-    digitalWrite(LEFT_BACKWARD, HIGH);
-    digitalWrite(RIGHT_BACKWARD, HIGH);
-    robotState = BACKWARD;
+    if (stateUpdated) {
+        Serial.println("Moving Backward");
+        stopMovement();
+        digitalWrite(LEFT_BACKWARD, HIGH);
+        digitalWrite(RIGHT_BACKWARD, HIGH);
+        robotState = BACKWARD;
+    }
 }
 
 void turnRight() {
-    Serial.println("Turning Right");
-    stopMovement();
-    analogWrite(LEFT_FORWARD, ROTATION_GAIN);
-    analogWrite(RIGHT_BACKWARD, ROTATION_GAIN);
-    robotState = TURN_RIGHT;
-    previousState = TURN_RIGHT;
+    if (stateUpdated) {
+        Serial.println("Turning Right");
+        stopMovement();
+        analogWrite(LEFT_FORWARD, ROTATION_GAIN);
+        analogWrite(RIGHT_BACKWARD, ROTATION_GAIN);
+        robotState = TURN_RIGHT;
+        previousState = TURN_RIGHT;
+    }
 }
 
 void turnLeft() {
-    Serial.println("Turning Left");
-    stopMovement();
-    analogWrite(LEFT_BACKWARD, ROTATION_GAIN);
-    analogWrite(RIGHT_FORWARD, ROTATION_GAIN);
-    robotState = TURN_LEFT;
-    previousState = TURN_LEFT;
+    if (stateUpdated) {
+        Serial.println("Turning Left");
+        stopMovement();
+        analogWrite(LEFT_BACKWARD, ROTATION_GAIN);
+        analogWrite(RIGHT_FORWARD, ROTATION_GAIN);
+        robotState = TURN_LEFT;
+        previousState = TURN_LEFT;
+    }
 }
