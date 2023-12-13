@@ -1,7 +1,7 @@
 // Constants for pin assignments
 #define BUTTON_PIN 12
 #define TRIGGER 8
-#define FORWARD_ECHO 7
+#define FORWARD_ECHO 6
 #define LEFT_ECHO 4
 #define RIGHT_ECHO 2
 #define BACKWARD_ECHO 1  // 1 ???
@@ -18,6 +18,8 @@
 const int blackColor = 300;
 const int whiteColor = 700;
 const int errorRange = 50;
+
+const bool readColor = true;
 
 // Distance measurements
 int forwardDistance = 0;
@@ -225,6 +227,7 @@ void stopMovement() {
     digitalWrite(RIGHT_FORWARD, LOW);
     digitalWrite(LEFT_BACKWARD, LOW);
     digitalWrite(RIGHT_BACKWARD, LOW);
+    Serial.println("Moving Forward");
 }
 
 void moveForward() {
