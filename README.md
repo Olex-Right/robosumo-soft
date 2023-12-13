@@ -10,4 +10,4 @@ Pull-request 4: author:mxlshk, color sensor test.
 
 Pull-request 5: author:mxlshk, global colorBlocked variable.
 
-Pull-request 6: author:mxlshk, main_refactored.ino + backward_echo handled.
+Pull-request 6: author:mxlshk, refactored_main.ino + backward_echo handled.
